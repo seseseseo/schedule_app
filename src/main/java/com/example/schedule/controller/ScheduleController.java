@@ -30,14 +30,19 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> save(@RequestBody ScheduleRequestDto requestDto,
                                                     HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false); // 세션 가져오기
         if (session == null || session.getAttribute("userId") == null) {
+            // 세션이 없거나 userId가 없으면 에러코드
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+        // 이후에 . 값을 꺼내서 로그인한 유저 정보를 가져와서 일정 등록함
         Long userId = (Long) session.getAttribute("userId");
         User user = userService.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 유저 객체와 요청 정보로 일정 생성
         Schedule schedule = Schedule.of(user,requestDto.getTitle(), requestDto.getContent());
+        // 디비에 저장
         Schedule saved = scheduleService.save(schedule);
         return ResponseEntity.created(URI.create("/api/schedules/" + saved.getId()))
                 .body(new ScheduleResponseDto(saved));

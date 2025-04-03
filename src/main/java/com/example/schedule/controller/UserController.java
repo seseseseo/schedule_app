@@ -54,8 +54,9 @@ public class UserController {
                                    HttpServletRequest request) {
         User user = userService.login(userRequestDto.getEmail(), userRequestDto.getPassword())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_PASSWORD));
+        // Session이 있으면 가져오고 없으면 Session을 생성해서 return (default = true)
         HttpSession session = request.getSession(true);
-        session.setAttribute("userId", user.getId());
+        session.setAttribute("userId", user.getId()); // 사용자가 로그인 할 때 이 값을 세션에 저장해둠
         return ResponseEntity.ok("로그인 성공");
     }
 
