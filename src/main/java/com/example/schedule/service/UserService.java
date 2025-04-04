@@ -14,12 +14,12 @@ public interface UserService {
     //유저 단건 조회
     Optional<UserResponseDto> findById(Long id);
     // 로그인 성공 시 userId 반환 (없으면 Optional.empty)
-    Optional<Long> login(String email, String password);
+    Optional<UserResponseDto> login(String email, String password);
     //유저 업데이트
     void updateUserWithPasswordCheck(Long id, UserRequestDto dto, String password);
     //유저 삭제
     void deleteUser(Long id);
-    //비밀번호 체크
+
 
 
 }

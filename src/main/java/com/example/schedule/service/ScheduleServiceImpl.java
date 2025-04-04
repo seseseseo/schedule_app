@@ -27,8 +27,6 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     /**
      * 일정 저장 (DTO + 사용자 ID 기반)
-     *
-     * @return
      */
     @Override
     public ScheduleResponseDto saveWithUser(ScheduleRequestDto dto, Long userId) {
@@ -63,7 +61,6 @@ public class ScheduleServiceImpl implements ScheduleService{
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
         scheduleRepository.deleteById(id);
-
     }
 
     @Override
@@ -90,14 +87,13 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public void deleteSchedule(Long id, String password) {
+    public void deleteScheduleWithPassword(Long id, String password) {
         Schedule schedule = scheduleRepository.findByIdWithUser(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, schedule.getUser().getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-
         scheduleRepository.delete(schedule);
     }
 }

@@ -24,5 +24,5 @@ public interface ScheduleService {
 
     void updateSchedule(Long id, @Valid ScheduleRequestDto requestDto, String password);
 
-    void deleteSchedule(Long id, String password);
+    void deleteScheduleWithPassword(Long id, String password);
 }

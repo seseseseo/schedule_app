@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 회원가입 처리
+     * 회원가입
      * 이메일 중복 검사 후, 비밀번호 암호화 해서 저장
      */
     @Override
@@ -51,29 +50,28 @@ public class UserServiceImpl implements UserService {
      * 이메일 조회한 후, 비번 일치하면 id 반환, 실패하면 Optional.empty()
      */
     @Override
-    public Optional<Long> login(String email, String password) {
-        Optional<User> users = userRepository.findByEmail(email);
-        if(users.isEmpty()) {
-            return Optional.empty();
-        }
-        User user = users.get();
-        if(!passwordEncoder.matches(password, user.getPassword())) {
-            return Optional.empty();
-        }
-        return Optional.of(user.getId());
+    public Optional<UserResponseDto> login(String email, String password) {
+        return userRepository.findByEmail(email)
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .map(UserResponseDto::new);
     }
 
     @Override
+    @Transactional
     public void updateUserWithPasswordCheck(Long id, UserRequestDto dto, String password) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+
+        boolean matched = passwordEncoder.matches(password, user.getPassword());
+        if (!matched) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-
-        user.updateUser(dto.getEmail(), dto.getUsername(), dto.getPassword());
-
+        if (!user.getEmail().equals(dto.getEmail())) {
+            throw new CustomException(ErrorCode.EMAIL_CHANGE_NOT_ALLOWED);
+        }
+        user.updateUsername(dto.getUsername());
     }
 
     /**

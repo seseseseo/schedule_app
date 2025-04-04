@@ -10,25 +10,31 @@
     <div th:replace="~{fragments/bodyHeader :: bodyHeader}" />
     <div class="jumbotron">
         <h1>🗓️ 일정 관리 앱</h1>
+
+        <!-- 로그인 유저인 경우 -->
         <div th:if="${loginUser != null}">
             <span th:text="|${loginUser.username}님 안녕하세요!|"></span>
-
-        </div>
-        <p class="lead">
             <a class="btn btn-lg btn-dark"
-                           th:if="${loginUser != null}"
-                           th:href="@{'/users/' + ${loginUser.id}}">내 정보 보기</a>
-        </p>
+               th:href="@{'/users/' + ${loginUser.id}}">내 정보 보기</a>
+        </div>
 
-        <p>
-            <a class="btn btn-lg btn-secondary" th:href="@{/register}" >회원 가입</a>
-            <a class="btn btn-lg btn-secondary" th:href="@{/login}">로그인</a>
-        </p>
-        <p class="lead">일정 </p>
-        <p>
-            <a class="btn btn-lg btn-dark" th:href="@{/schedule/new}">일정 등록</a>
-            <a class="btn btn-lg btn-dark" th:href="@{/schedule/list}">일정 목록</a>
-        </p>
+        <!-- 비로그인 유저인 경우 -->
+        <div th:if="${loginUser == null}">
+            <p>
+                <a class="btn btn-lg btn-secondary" th:href="@{/register}" >회원 가입</a>
+                <a class="btn btn-lg btn-secondary" th:href="@{/login}">로그인</a>
+            </p>
+        </div>
+        <div class="blank" style="margin: 10px 0 10px 0"></div>
+        <div>
+            <p class="lead" th:if="${loginUser == null}">로그인하면 일정을 관리할 수 있어요 📝</p>
+            <p>
+                <a class="btn btn-lg btn-dark" th:href="@{/schedule/new}">일정 등록</a>
+                <a class="btn btn-lg btn-dark" th:href="@{/schedule/list}">일정 목록</a>
+            </p>
+        </div>
+
+
     </div>
     <div th:replace="~{fragments/footer :: footer}" />
 </div> <!-- /container -->

@@ -1,5 +1,6 @@
 package com.example.schedule.domain.entity;
 
+import com.example.schedule.config.PasswordEncoder;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,10 +31,11 @@ public class User extends Base {
     public static User of(String username, String password, String email) {
         return new User(username, password, email);
     }
-    public void updateUser(String username, String email, String password) {
+    public void updateUsername(String username) {
         this.username = username;
-        this.email = email;
-        this.password = password;
+    }
+    public boolean checkPassword(String rawPassword, PasswordEncoder encoder) {
+        return encoder.matches(rawPassword, this.password);
     }
 
 }

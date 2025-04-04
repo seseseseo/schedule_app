@@ -9,17 +9,16 @@
 
 <form th:action="@{'/users/' + ${userForm.id} + '/edit'}" method="post" th:object="${userForm}">
     <input type="hidden" th:field="*{id}" />
-    <input type="text" th:field="*{username}" required> <br>
+    이름 : <input type="text" th:field="*{username}" required> <br>
 
-    <input type="email" th:field="*{email}" required> <br>
+    이메일 : <input type="email" th:field="*{email}" required> <br>
 
-
-    <input type="password"  name="password" placeholder="현재 비밀번호 입력" required>
+    비밀번호 : <input type="password"  name="password" placeholder="현재 비밀번호 입력" required>
 
     <button type="submit">수정 완료</button>
 </form>
 
 <br>
-<a th:href="@{/}">← 홈으로</a>
+<a th:href="@{/}">홈으로</a>
 </body>
 </html>
