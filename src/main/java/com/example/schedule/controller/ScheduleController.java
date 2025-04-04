@@ -12,6 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,14 +65,21 @@ public class ScheduleController {
         return "redirect:/schedule/list";
     }
 
+//    @GetMapping("/schedule/list")
+//    public String schedulesList(HttpServletRequest request, Model model) {
+//        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+//        if (loginUser != null) {
+//            model.addAttribute("loginUser", loginUser);
+//        }
+//        model.addAttribute("schedules",scheduleService.findAll());
+//        return "schedule/list";
+//    }
     @GetMapping("/schedule/list")
-    public String schedulesList(HttpServletRequest request, Model model) {
-        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
-        if (loginUser != null) {
-            model.addAttribute("loginUser", loginUser);
-        }
-        model.addAttribute("schedules",scheduleService.findAll());
+    public String getPagedSchedule(@PageableDefault(size = 10, sort = "lastModifiedDate", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
+        Page<ScheduleResponseDto> page = scheduleService.findAll(pageable);
+        model.addAttribute("page", page);
         return "schedule/list";
+
     }
 
     // 단건 조회
@@ -76,8 +87,11 @@ public class ScheduleController {
     public String scheduleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
         ScheduleResponseDto schedule = scheduleService.findById(id);
         model.addAttribute("schedule", schedule);
+
         UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
-        model.addAttribute("loginUserId", loginUser.getId());
+        Long loginUserId = (loginUser != null) ? loginUser.getId() : null;
+
+        model.addAttribute("loginUserId", loginUserId);
         return "schedule/detail";
     }
     //수정

@@ -10,6 +10,9 @@ import com.example.schedule.exception.ErrorCode;
 import com.example.schedule.repository.ScheduleRepository;
 import com.example.schedule.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,16 +40,16 @@ public class ScheduleServiceImpl implements ScheduleService{
         return new ScheduleResponseDto(saved);
     }
 
-    @Override
-    public List<ScheduleResponseDto> findAll() {
-        List<Schedule> schedules = scheduleRepository.findAllWithUser(); // 👈 이걸로 변경
-
-        List<ScheduleResponseDto> list = new ArrayList<>();
-        for (Schedule schedule : schedules) {
-            list.add(new ScheduleResponseDto(schedule));
-        }
-        return list;
-    }
+//    @Override
+//    public List<ScheduleResponseDto> findAll() {
+//        List<Schedule> schedules = scheduleRepository.findAllWithUser(); // 👈 이걸로 변경
+//
+//        List<ScheduleResponseDto> list = new ArrayList<>();
+//        for (Schedule schedule : schedules) {
+//            list.add(new ScheduleResponseDto(schedule));
+//        }
+//        return list;
+//    }
 
     @Override
     public ScheduleResponseDto findById(Long id) {
@@ -95,5 +98,11 @@ public class ScheduleServiceImpl implements ScheduleService{
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         scheduleRepository.delete(schedule);
+    }
+
+    @Override
+    public Page<ScheduleResponseDto> findAll(Pageable pageable) {
+        Page<Schedule> page = scheduleRepository.findAllWithUser(pageable);
+        return page.map(ScheduleResponseDto::new);
     }
 }

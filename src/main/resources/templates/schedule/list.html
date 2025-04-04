@@ -75,7 +75,7 @@
             <span class="date">작성일</span>
             <span class="author">작성자</span>
         </li>
-        <li th:each="schedule : ${schedules}">
+        <li th:each="schedule : ${page.content}">
             <a th:href="@{'/schedule/' + ${schedule.id}}" class="list-link">
             <span class="number" th:text="${schedule.id}"></span>
             <span class="title" th:text="${schedule.title}"></span>
@@ -84,6 +84,17 @@
             </a>
         </li>
     </ul>
+<!--페이징 네비게이션-->
+<div class="pagination">
+    <a th:if="${page.hasPrevious()}"
+       th:href="@{|/schedule/list?page=${page.number - 1}|}">이전</a>
+
+    <span>페이지 <span th:text="${page.number + 1}"></span> /
+          <span th:text="${page.totalPages}"></span></span>
+
+    <a th:if="${page.hasNext()}"
+       th:href="@{|/schedule/list?page=${page.number + 1}|}">다음</a>
+</div>
     <div class="jumbotron">
         <p>
             <a class="btn btn-lg btn-dark" th:href="@{/schedule/new}">일정 등록</a>

@@ -38,10 +38,10 @@ public class ApiScheduleController {
                 .body(responseDto);
     }
     // 일정 전체 조회
-    @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> findAll() {
-        return ResponseEntity.ok(scheduleService.findAll());
-    }
+//    @GetMapping
+//    public ResponseEntity<List<ScheduleResponseDto>> findAll() {
+//        return ResponseEntity.ok(scheduleService.findAll());
+//    }
 
     // 일정 단건 조회
     @GetMapping("/{id}")
