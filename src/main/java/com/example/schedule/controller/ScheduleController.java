@@ -1,64 +1,131 @@
 package com.example.schedule.controller;
 
 import com.example.schedule.domain.entity.Schedule;
-import com.example.schedule.domain.entity.User;
 import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
+import com.example.schedule.dto.UserResponseDto;
 import com.example.schedule.exception.CustomException;
 import com.example.schedule.exception.ErrorCode;
+import com.example.schedule.repository.ScheduleRepository;
 import com.example.schedule.service.ScheduleService;
-import com.example.schedule.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/schedules")
+@Controller
+@Log4j2
 public class ScheduleController {
-    private final ScheduleService scheduleService;
-    private final UserService userService;
+    private ScheduleService scheduleService;
+    private ScheduleRepository scheduleRepository;
+    //레파지토리 직접 사용함 나중에 수정해야댐
+    public ScheduleController(ScheduleService scheduleService, ScheduleRepository scheduleRepository) {
+        this.scheduleService = scheduleService;
+        this.scheduleRepository = scheduleRepository;
+    }
 
-    //일정 등록
-    @PostMapping
-    public ResponseEntity<ScheduleResponseDto> save(@RequestBody ScheduleRequestDto requestDto,
-                                                    HttpServletRequest request) {
-        HttpSession session = request.getSession(false); // 세션 가져오기
-        if (session == null || session.getAttribute("userId") == null) {
-            // 세션이 없거나 userId가 없으면 에러코드
+    // 일정 등록 폼
+    @GetMapping("/schedule/new")
+    public String newScheduleForm(HttpServletRequest request,Model model) {
+        model.addAttribute("scheduleForm", new ScheduleRequestDto());
+        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("loginUser", loginUser);
+        return "schedule/new";
+    }
+
+    // 일정 등록 처리
+    @PostMapping("/schedule/new")
+    public String newSchedule(@Valid @ModelAttribute("scheduleForm") ScheduleRequestDto scheduleRequestDto,
+                              BindingResult bindingResult,
+                              HttpServletRequest request, Model model) {
+
+        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("loginUser", loginUser);
+            return "schedule/new";
+        }
+        scheduleService.saveWithUser(scheduleRequestDto, loginUser.getId());
+        return "redirect:/schedule/list";
+    }
+
+    @GetMapping("/schedule/list")
+    public String schedulesList(HttpServletRequest request, Model model) {
+        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        if (loginUser != null) {
+            model.addAttribute("loginUser", loginUser);
+        }
+        model.addAttribute("schedules",scheduleService.findAll());
+        return "schedule/list";
+    }
+
+    // 단건 조회
+    @GetMapping("/schedule/{id}")
+    public String scheduleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
+        ScheduleResponseDto schedule = scheduleService.findById(id);
+        model.addAttribute("schedule", schedule);
+        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        model.addAttribute("loginUserId", loginUser.getId());
+        return "schedule/detail";
+    }
+    //수정
+    @GetMapping("/schedule/{id}/edit")
+    public String editSchedule(@PathVariable Long id,HttpServletRequest request,
+                               Model model, RedirectAttributes redirectAttributes) {
+        Schedule schedule = scheduleRepository.findByIdWithUser(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
+        UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        if (!schedule.getUser().getId().equals(loginUser.getId())) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        // 이후에 . 값을 꺼내서 로그인한 유저 정보를 가져와서 일정 등록함
-        Long userId = (Long) session.getAttribute("userId");
-        ScheduleResponseDto responseDto = scheduleService.saveWithUser(requestDto, userId);
-        return ResponseEntity
-                .created(URI.create("/api/schedules/" + responseDto.getId()))
-                .body(responseDto);
+        model.addAttribute("scheduleForm", new ScheduleRequestDto(schedule));
+        return "schedule/edit";
     }
-    // 일정 전체 조회
-    @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> findAll() {
-        return ResponseEntity.ok(scheduleService.findAll());
-    }
+    // 수정 처리
+    @PostMapping("/schedule/{id}/edit")
+    public String updateSchedule(@PathVariable Long id,
+                                 @Valid @ModelAttribute("scheduleForm") ScheduleRequestDto dto,
+                                 BindingResult bindingResult,
+                                 @RequestParam String password,
+                                 HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "schedule/edit";
+        }
 
-    // 일정 단건 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> findById(@PathVariable Long id) {
-        ScheduleResponseDto responseDto = scheduleService.findById(id);
-        return ResponseEntity.ok(responseDto);
-    }
+       UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
+        try {
+            scheduleService.updateSchedule(id, dto, password);
+            return "redirect:/schedule/list";
+        } catch (CustomException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/schedule/" + id + "/edit";
+        }
 
-    // 일정 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        scheduleService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/schedule/{id}/delete")
+    public String deleteSchedule(@PathVariable Long id,
+                                 @RequestParam String password,
+                                 HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            scheduleService.deleteScheduleWithPassword(id, password);
+            return "redirect:/schedule/list";
+        } catch (CustomException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/schedule/" + id + "/edit";
+        }
     }
 }
