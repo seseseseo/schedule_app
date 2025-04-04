@@ -12,11 +12,14 @@
         <h1>🗓️ 일정 관리 앱</h1>
         <div th:if="${loginUser != null}">
             <span th:text="|${loginUser.username}님 안녕하세요!|"></span>
-            <form th:action="@{/logout}" method="post" style="display: inline">
-                <button type="submit">로그아웃</button>
-            </form>
+
         </div>
-        <p class="lead">회원 </p>
+        <p class="lead">
+            <a class="btn btn-lg btn-dark"
+                           th:if="${loginUser != null}"
+                           th:href="@{'/users/' + ${loginUser.id}}">내 정보 보기</a>
+        </p>
+
         <p>
             <a class="btn btn-lg btn-secondary" th:href="@{/register}" >회원 가입</a>
             <a class="btn btn-lg btn-secondary" th:href="@{/login}">로그인</a>

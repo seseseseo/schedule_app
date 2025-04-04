@@ -1,13 +1,28 @@
 package com.example.schedule.service;
 
-import com.example.schedule.domain.entity.Schedule;
+import com.example.schedule.dto.ScheduleRequestDto;
+import com.example.schedule.dto.ScheduleResponseDto;
+import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleService {
-    Schedule save(Schedule schedule);
-    List<Schedule> findAll();
-    Optional<Schedule> findById(Long id);
+    //일정 등록
+    ScheduleResponseDto saveWithUser(ScheduleRequestDto dto, Long userId);
+
+    // 전체 일정 조회
+    List<ScheduleResponseDto> findAll();
+
+    // 단건 조회
+    ScheduleResponseDto findById(Long id);
+
+    // 일정 삭제
     void deleteById(Long id);
+
+    //단건 조회에서 비밀번호 체크
+    void checkPassword(Long scheduleId, String password);
+
+    void updateSchedule(Long id, @Valid ScheduleRequestDto requestDto, String password);
+
+    void deleteSchedule(Long id, String password);
 }

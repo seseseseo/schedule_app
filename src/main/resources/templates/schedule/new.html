@@ -6,11 +6,11 @@
 </head>
 <body>
 <h1>일정 등록</h1>
-<form th:action="@{/api/schedules}" method="post" th:object="${scheduleForm}">
-    <label>제목: <input type="text" th:field="*{title}" required></label><br>
-    <label>내용: <textarea th:field="*{content}" required></textarea></label><br>
+<form th:action="@{/schedule/new}" method="post" th:object="${scheduleForm}">
+    <label>제목: <input type="text" th:field="*{title}" name="title" required></label><br>
+    <label>내용: <textarea th:field="*{content}" name="content" required></textarea></label><br>
     <button type="submit">등록</button>
 </form>
-<a th:href="@{/static}">홈으로</a>
+<a th:href="@{/}">홈으로</a>
 </body>
 </html>

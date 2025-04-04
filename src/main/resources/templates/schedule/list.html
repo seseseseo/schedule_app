@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <meta charset="UTF-8">
+    <title>일정 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        li:first-child {
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+        li a.list-link {
+            display: flex;
+            flex: 1;
+            text-decoration: none;
+            color: inherit;
+            align-items: center;
+        }
+        li span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        li span.title {
+            flex: 5.5;
+        }
+        li span.date {
+            flex: 2;
+        }
+        li span.number {
+            flex: 1;
+        }
+        li span.author {
+            flex: 1.5;
+        }
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<h1>일정 목록</h1>
+    <ul>
+        <li>
+            <span class="number">글번호</span>
+            <span class="title">제목</span>
+            <span class="date">작성일</span>
+            <span class="author">작성자</span>
+        </li>
+        <li th:each="schedule : ${schedules}">
+            <a th:href="@{'/schedule/' + ${schedule.id}}" class="list-link">
+            <span class="number" th:text="${schedule.id}"></span>
+            <span class="title" th:text="${schedule.title}"></span>
+            <span class="date" th:text="${#temporals.format(schedule.createdAt, 'yyyy-MM-dd')}"></span>
+            <span class="author" th:text="${schedule.username}"></span>
+            </a>
+        </li>
+    </ul>
+    <div class="jumbotron">
+        <p>
+            <a class="btn btn-lg btn-dark" th:href="@{/schedule/new}">일정 등록</a>
+            <a class="btn btn-lg btn-dark" th:href="@{/}">홈으로</a>
+        </p>
+    </div>
+
+
+
+
+</body>
+</html>

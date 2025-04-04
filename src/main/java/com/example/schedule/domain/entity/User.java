@@ -30,6 +30,10 @@ public class User extends Base {
     public static User of(String username, String password, String email) {
         return new User(username, password, email);
     }
-
+    public void updateUser(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 
 }

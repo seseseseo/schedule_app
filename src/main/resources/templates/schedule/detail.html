@@ -1,0 +1,47 @@
+<!doctype html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/detail.css}">
+</head>
+<body>
+<div class="container">
+    <div  class="id-number" style="color:#888;">글 번호 : <span th:text="${schedule.id} " style="color: #888;">0</span></div>
+    <div class="title" th:text="${schedule.title}">제목</div>
+
+    <div class="meta">
+        작성자: <span th:text="${schedule.username}"></span>&nbsp;&nbsp; |&nbsp;&nbsp;
+        작성일시: <span th:text="${#temporals.format(schedule.createdAt, 'yyyy-MM-dd HH:mm')}"></span> &nbsp;&nbsp|&nbsp;&nbsp;
+    </div>
+
+    <div class="description" th:text="${schedule.content}">
+        내용
+    </div>
+
+    <div class="meta">
+    </div>
+
+    <input type="hidden" id="todoId" th:value="${schedule.id}">
+    <!-- 비밀번호 확인 -->
+    <div class="btn-group check-pass">
+        <div th:if="${loginUserId != null and loginUserId == schedule.userId}">
+            <a th:href="@{'/schedule/' + ${schedule.id} + '/edit'}">
+                <button type="button">수정하기</button>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="btn-group list">
+        <a th:href="@{/}">
+            <button type="button" class="btn-list">목록으로 돌아가기</button>
+        </a>
+    </div>
+
+</div>
+</body>
+</html>

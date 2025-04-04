@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
@@ -24,7 +26,7 @@ public class Schedule extends BaseTime {
 
     @Column(nullable = false)
     private String content;
-
+    private LocalDateTime updateAt;
     // 생성자 (비공개 생성)
     private Schedule(User user, String title, String content) {
         this.user = user;
@@ -35,9 +37,10 @@ public class Schedule extends BaseTime {
     public static Schedule of(User user, String title, String content) {
         return new Schedule(user, title, content);
     }
-//    //정적팩토리
-//    public static Schedule create(User user, String title, String content) {
-//        return new Schedule(user, title, content);
-//    }
-
+//
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.updateAt = LocalDateTime.now();
+    }
 }

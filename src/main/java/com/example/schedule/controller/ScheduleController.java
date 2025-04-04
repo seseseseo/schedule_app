@@ -37,30 +37,22 @@ public class ScheduleController {
         }
         // 이후에 . 값을 꺼내서 로그인한 유저 정보를 가져와서 일정 등록함
         Long userId = (Long) session.getAttribute("userId");
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 유저 객체와 요청 정보로 일정 생성
-        Schedule schedule = Schedule.of(user,requestDto.getTitle(), requestDto.getContent());
-        // 디비에 저장
-        Schedule saved = scheduleService.save(schedule);
-        return ResponseEntity.created(URI.create("/api/schedules/" + saved.getId()))
-                .body(new ScheduleResponseDto(saved));
+        ScheduleResponseDto responseDto = scheduleService.saveWithUser(requestDto, userId);
+        return ResponseEntity
+                .created(URI.create("/api/schedules/" + responseDto.getId()))
+                .body(responseDto);
     }
     // 일정 전체 조회
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findAll() {
-        List<ScheduleResponseDto> result = scheduleService.findAll().stream()
-                .map(ScheduleResponseDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(scheduleService.findAll());
     }
 
     // 일정 단건 조회
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> findById(@PathVariable Long id) {
-        Optional<Schedule> schedule = scheduleService.findById(id);
-        return ResponseEntity.ok(new ScheduleResponseDto(schedule.orElse(null)));
+        ScheduleResponseDto responseDto = scheduleService.findById(id);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 일정 삭제

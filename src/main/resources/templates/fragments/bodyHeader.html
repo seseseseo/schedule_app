@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="header" th:fragment="bodyHeader">
-    <ul class="nav nav-pills pull-right">
-        <li><a href="/">Home</a></li>
-    </ul>
+<div class="header" th:fragment="bodyHeader" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <a href="/">Home</a>
+    </div>
+
+    <!-- 오른쪽 끝에 로그아웃 -->
+    <form th:action="@{/logout}" method="post" style="margin: 0;">
+        <button type="submit" style="border: none; background: none; cursor: pointer; font-size: 1rem;">
+            로그아웃
+        </button>
+    </form>
 </div>
 <a href="/"><h3 class="text-muted">HELLO SHOP</h3></a>
