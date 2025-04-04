@@ -8,7 +8,8 @@ public enum ErrorCode {
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "003_SCHEDULE_NOT_FOUND","스케쥴을 찾을 수 없습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "004_INVALID_PASSWORD", "비밀번호가 유효하지 않습니다."),
     INTERNAL_ERROR(HttpStatus.BAD_REQUEST,"005_INTERNAL_ERROR","서버 오류가 발생했습니다"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "006_UNAUTHORIZED","인가된 사용자가 아닙니다");
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "006_UNAUTHORIZED","인가된 사용자가 아닙니다"),
+    EMAIL_CHANGE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "007", "이메일은 변경할 수 없습니다.");
 
     private HttpStatus status;
     private final String code;
