@@ -35,6 +35,33 @@
         </div>
     </div>
 
+    <div>
+        <h3>댓글</h3>
+        <div th:if="${#lists.isEmpty(comments)}">
+            <p>댓글이 아직 없습니다.</p>
+        </div>
+        <div th:each="comment : ${comments}">
+            <div style="margin-bottom: 10px;">
+                <strong th:text="${comment.writer}">작성자</strong>
+                <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd')}">작성일</span><br/>
+                <p th:text="${comment.content}">댓글 내용</p>
+
+                <!-- 댓글 삭제 -->
+                <form th:action="@{/comments/{id}/delete(id=${comment.id})}" method="post">
+                    <input type="hidden" name="scheduleId" th:value="${schedule.id}" />
+                    <button type="submit">삭제</button>
+                </form>
+            </div>
+            <hr/>
+        </div>
+    </div>
+    <div>
+        <h3>댓글 작성</h3>
+        <form th:action="@{/schedule/{id}/comments(id=${schedule.id})}" method="post">
+            <textarea name="content" rows="3" cols="40" placeholder="댓글을 입력하세요..."></textarea><br/>
+            <button type="submit">등록</button>
+        </form>
+    </div>
 
     <div class="btn-group list">
         <a th:href="@{/}">

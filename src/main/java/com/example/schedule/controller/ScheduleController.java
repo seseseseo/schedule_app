@@ -1,12 +1,14 @@
 package com.example.schedule.controller;
 
 import com.example.schedule.domain.entity.Schedule;
+import com.example.schedule.dto.CommentDto;
 import com.example.schedule.dto.ScheduleRequestDto;
 import com.example.schedule.dto.ScheduleResponseDto;
 import com.example.schedule.dto.UserResponseDto;
 import com.example.schedule.exception.CustomException;
 import com.example.schedule.exception.ErrorCode;
 import com.example.schedule.repository.ScheduleRepository;
+import com.example.schedule.service.CommentService;
 import com.example.schedule.service.ScheduleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,10 +31,12 @@ import java.util.List;
 public class ScheduleController {
     private ScheduleService scheduleService;
     private ScheduleRepository scheduleRepository;
+    private CommentService commentService;
     //레파지토리 직접 사용함 나중에 수정해야댐
-    public ScheduleController(ScheduleService scheduleService, ScheduleRepository scheduleRepository) {
+    public ScheduleController(ScheduleService scheduleService, ScheduleRepository scheduleRepository, CommentService commentService) {
         this.scheduleService = scheduleService;
         this.scheduleRepository = scheduleRepository;
+        this.commentService = commentService;
     }
 
     // 일정 등록 폼
@@ -87,7 +91,8 @@ public class ScheduleController {
     public String scheduleDetail(@PathVariable Long id, Model model, HttpServletRequest request) {
         ScheduleResponseDto schedule = scheduleService.findById(id);
         model.addAttribute("schedule", schedule);
-
+        List<CommentDto> comments = commentService.getCommentByScheduleId(id);
+        model.addAttribute("comments", comments);
         UserResponseDto loginUser = (UserResponseDto) request.getAttribute("loginUser");
         Long loginUserId = (loginUser != null) ? loginUser.getId() : null;
 
