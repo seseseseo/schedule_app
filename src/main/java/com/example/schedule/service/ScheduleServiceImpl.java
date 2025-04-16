@@ -26,7 +26,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // 비밀번호 비교에 사용
 
     /**
      * 일정 저장 (DTO + 사용자 ID 기반)
@@ -35,31 +35,25 @@ public class ScheduleServiceImpl implements ScheduleService{
     public ScheduleResponseDto saveWithUser(ScheduleRequestDto dto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        // 사용자를 찾아서
         Schedule schedule = Schedule.of(user, dto.getTitle(), dto.getContent());
+        // 정적팩토리 메서드를 이용해 일정을 생성하고
         Schedule saved = scheduleRepository.save(schedule);
+        // 저장했다
         return new ScheduleResponseDto(saved);
     }
-
-//    @Override
-//    public List<ScheduleResponseDto> findAll() {
-//        List<Schedule> schedules = scheduleRepository.findAllWithUser(); // 👈 이걸로 변경
-//
-//        List<ScheduleResponseDto> list = new ArrayList<>();
-//        for (Schedule schedule : schedules) {
-//            list.add(new ScheduleResponseDto(schedule));
-//        }
-//        return list;
-//    }
 
     @Override
     public ScheduleResponseDto findById(Long id) {
         Schedule schedule = scheduleRepository.findByIdWithUser(id)
+                //fetch join으로 유저까지 함께 조회 후ㅜ 없으면 커스텀 에러 던짐
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         return new ScheduleResponseDto(schedule);
     }
 
     @Override
     public void deleteById(Long id) {
+        // 삭제 전에 존재 여부 체크하고 삭제
         if (!scheduleRepository.existsById(id)) {
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
@@ -72,16 +66,19 @@ public class ScheduleServiceImpl implements ScheduleService{
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
 
         User user = schedule.getUser();
-        if (!password.matches(user.getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
+//        if (!password.matches(user.getPassword())) {
+//            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+//        }
     }
 
     @Override
     public void updateSchedule(Long id, ScheduleRequestDto requestDto, String password) {
         Schedule schedule = scheduleRepository.findByIdWithUser(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
-
+        //업데이트 . 사용자 비밀번호 검증
         if (!passwordEncoder.matches(password, schedule.getUser().getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
@@ -102,7 +99,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public Page<ScheduleResponseDto> findAll(Pageable pageable) {
+        //페이징 처리
         Page<Schedule> page = scheduleRepository.findAllWithUser(pageable);
-        return page.map(ScheduleResponseDto::new);
+        return page.map(ScheduleResponseDto::from);
+        //map의 사용이 좋을까?
     }
 }

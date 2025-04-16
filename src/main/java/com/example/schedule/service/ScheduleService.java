@@ -11,7 +11,6 @@ public interface ScheduleService {
     //일정 등록
     ScheduleResponseDto saveWithUser(ScheduleRequestDto dto, Long userId);
 
-
     // 단건 조회
     ScheduleResponseDto findById(Long id);
 

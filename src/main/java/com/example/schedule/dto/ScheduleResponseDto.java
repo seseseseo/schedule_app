@@ -1,6 +1,7 @@
 package com.example.schedule.dto;
 
 import com.example.schedule.domain.entity.Schedule;
+import com.example.schedule.domain.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -20,5 +21,11 @@ public class ScheduleResponseDto {
         this.username = schedule.getUser().getUsername();
         this.createdAt = schedule.getCreatedDate();
         this.userId = schedule.getUser().getId();
+    }
+
+
+    // 정적 팩토리 메서드 사용
+    public static ScheduleResponseDto from(Schedule schedule) {
+        return new ScheduleResponseDto(schedule); // 재사용
     }
 }

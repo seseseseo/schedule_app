@@ -37,11 +37,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long register(UserRequestDto dto) {
        if(userRepository.existsByEmail(dto.getEmail())) {
+           //이미 존재하는 이메일일 경우 예외 발생
            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
        }
-
+        //비밀번호 암호화
        String encodePassword = passwordEncoder.encode(dto.getPassword());
+       //정적 팩토러 메서드로 유저 객체 생성
        User users = User.of(dto.getUsername(), encodePassword, dto.getEmail());
+       // 저장 후 아이디 반환
        return userRepository.save(users).getId();
     }
 
@@ -53,7 +56,9 @@ public class UserServiceImpl implements UserService {
     public Optional<UserResponseDto> login(String email, String password) {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(UserResponseDto::new);
+                .map(UserResponseDto::from);
+        // 이메일로 유저를 조회하고 비밀번호 일치여부를 확인한다
+        // 성공하면 DTO로 반환함!
     }
 
     @Override
@@ -63,14 +68,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-
         boolean matched = passwordEncoder.matches(password, user.getPassword());
         if (!matched) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
-        }
+        } //비밀번호 맞는 지 검증
         if (!user.getEmail().equals(dto.getEmail())) {
             throw new CustomException(ErrorCode.EMAIL_CHANGE_NOT_ALLOWED);
         }
+        // 이메일은 변경 불가능
         user.updateUsername(dto.getUsername());
     }
 

@@ -1,17 +1,16 @@
 package com.example.schedule.controller;
 
 import com.example.schedule.config.PasswordEncoder;
-import com.example.schedule.dto.ScheduleRequestDto;
-import com.example.schedule.dto.ScheduleResponseDto;
+
 import com.example.schedule.dto.UserRequestDto;
 import com.example.schedule.dto.UserResponseDto;
 import com.example.schedule.exception.CustomException;
 import com.example.schedule.exception.ErrorCode;
-import com.example.schedule.service.ScheduleService;
+
 import com.example.schedule.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,14 +20,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
+@RequiredArgsConstructor
 public class UserController {
 
     private UserService userService;
     private PasswordEncoder passwordEncoder;
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-    }
+
     //회원가입 폼
     @GetMapping("/register")
     public String registerForm(Model model) {

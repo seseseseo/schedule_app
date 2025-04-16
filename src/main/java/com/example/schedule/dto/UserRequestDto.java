@@ -27,6 +27,12 @@ public class UserRequestDto {
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     private String email;
 
+    public UserRequestDto(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
+
 
 
 }

@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: schedule
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/schedule_app
+    username: root
+    password: 11111111
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: none
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+  messages:
+    basename: messages
+
+  web:
+    locale: ko_KR
+    locale-resolver: fixed
+
+login:
+  exclude-paths:
+    - /login
+    - /register
+    - /css/**
+    - /js/**
+    - /schedule/list
+    - /images/**
