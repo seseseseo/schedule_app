@@ -23,3 +23,6 @@ public class Base extends BaseTime {
     @LastModifiedBy
     private String lastModifiedBy;
 }
+
+//누가 마지막에 수정했다 누가 몇시몇분몇초에 수정했다
+// DB자체를 수정할 수 있어서 시스템이 수정했는지, 유저가했는지,

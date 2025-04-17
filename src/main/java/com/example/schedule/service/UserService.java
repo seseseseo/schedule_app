@@ -2,6 +2,7 @@ package com.example.schedule.service;
 
 import com.example.schedule.dto.UserRequestDto;
 import com.example.schedule.dto.UserResponseDto;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public interface UserService {
     // 로그인 성공 시 userId 반환 (없으면 Optional.empty)
     Optional<UserResponseDto> login(String email, String password);
     //유저 업데이트
-    void updateUserWithPasswordCheck(Long id, UserRequestDto dto, String password);
+    void updateUserWithPasswordCheck(Long id, @Valid  UserRequestDto dto, String password);
     //유저 삭제
     void deleteUser(Long id);
 

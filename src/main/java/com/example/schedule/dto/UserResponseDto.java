@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public class UserResponseDto {
     private Long id;
-    private String username;
-    private String email;
+    private final String username;
+    private final String email;
 
 
     public UserResponseDto(User user) {
@@ -32,18 +32,6 @@ public class UserResponseDto {
                 user.getUsername(),
                 user.getEmail()
         );
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
 

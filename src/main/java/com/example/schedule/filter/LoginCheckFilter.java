@@ -23,8 +23,8 @@ import java.io.IOException;
 @RequiredArgsConstructor // 초기화 되지 않은 final 필드에 대해 생성자를 만들어줌
 //ㅇㅣ걸 쓰고싶은데 value는 final 필드가 불가능 하다고해서 다른 방법을 찾음
 public class LoginCheckFilter implements Filter {
-    //filter인터페이스를 구현한 커스텀 필터
-    // http요청이 컨트롤러에 가기 전에 필터가 먼저 요청을 가로채서 처리할 수 있다
+    // filter 인터페이스를 구현한 커스텀 필터
+    // http 요청이 컨트롤러에 가기 전에 필터가 먼저 요청을 가로채서 처리할 수 있다
     private final UserRepository userRepository;
     private final LoginProperties loginProperties; //yml에 정의한 경로를 바인딩해주는 설정 클래스
     private final AntPathMatcher pathMatcher = new AntPathMatcher();

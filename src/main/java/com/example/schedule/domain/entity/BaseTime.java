@@ -17,7 +17,7 @@ public class BaseTime {
     @CreatedDate
     @Column(updatable = false, name = "created_at")
     private LocalDateTime createdDate;
-
+    //이부분 필드 이름 수정
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime lastModifiedDate;

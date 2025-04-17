@@ -20,7 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+// 이 클래스가 서비스 계층의 컴포넌트임을 나타내는 어노테이션
+// Spring 이 이 클래스를 빈으로 등록해 관리하게 해줌
 @Transactional
+// 하나의 트랜잭션으로 묶여서 실행되도록 해주
+//  DB 작업이 여러 번 수행되더라도 모두 성공하면 커밋, 하나라도 실패하면 롤백
+// 댓글은 1. 스케줄 프록시 조회 2. 댓글 저장 두가지 작업을 포함해서 하나라도 실패하면 전체 작업을 롤백하는게 맞다고 생각함
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService{
 

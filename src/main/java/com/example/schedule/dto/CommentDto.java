@@ -9,9 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter @Setter // 모든 필드에 대한 getter/setter 메서드 자동 생성
+@AllArgsConstructor // 모든 필드를 인자로 받는 생성자 생성
+@NoArgsConstructor // 기본 생성자 생성 (인자 없음)
 public class CommentDto {
     private Long id;
     private String content;

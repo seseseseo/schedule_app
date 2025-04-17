@@ -14,6 +14,10 @@ public class ScheduleResponseDto {
     private final String title;
     private final String content;
     private LocalDateTime createdAt;
+    //response Dto에서 final 키워드
+    // 서버에서 클라이언트로 출력되는 데이터 전달 객체
+    // final을 사용해 불변 객체로 만들었음
+
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
         this.title = schedule.getTitle();

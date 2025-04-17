@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//@Data를 써도되려나?
 @Setter
 @Getter
 @AllArgsConstructor
